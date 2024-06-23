@@ -1,6 +1,16 @@
 import streamlit as st
 from difflib import ndiff
 from annotated_text import annotated_text
+from optimum.intel import OVModelForSeq2SeqLM
+
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+@st.cache_resource
+def get_sage():
+    tokenizer = AutoTokenizer.from_pretrained("ai-forever/sage-fredt5-distilled-95m")
+    #model = AutoModelForSeq2SeqLM.from_pretrained("ai-forever/sage-fredt5-distilled-95m")
+    model = OVModelForSeq2SeqLM.from_pretrained('app/sage-t5-small-ov-f32', local_files_only=True, compile=True)
+    #model.to("cuda")
+    return tokenizer, model
 
 
 # Function to highlight differences
@@ -13,17 +23,27 @@ def highlight_differences(original, corrected):
     corrected = corrected.split()
     for word in range(len(corrected)):
         error = []
-        for i in range(len(corrected[word])):
-            # print(corrected[word][i], original[word][i])
-            if corrected[word][i].islower() != original[word][i].islower() and 'Регистр буквы' not in error:
-                error.append('Регистр буквы')
+        if len(corrected[word]) > len(original[word]):
+          if corrected[word][-1] in ",.:;'[]|\()!@#$%^&*-=+?" and corrected[word][-1] != original[word][-1]:
+            error.append('пропущен знак препинания')
+            if len(corrected[word][:-1]) > len(original[word]):
+              error.append('пропущена буква')
+          else:
+              error.append('пропущена буква')
+        if len(corrected[word]) < len(original[word]):
+          error.append('лишняя буква')
+        n = min(len(corrected[word]), len(original[word]))
+        for i in range(n):
+            print(corrected[word][i], original[word][i])
+            if corrected[word][i].islower() != original[word][i].islower() and 'регистр буквы' not in error:
+                error.append('регистр буквы')
 
-            if corrected[word][i] != original[word][i] and len(corrected[word][i]) > len(original[word][i]) and 'Пропущена буква' not in error:
-                error.append('Пропущена буква')
+            if corrected[word][i].lower() != original[word][i].lower() and 'ошибка в написании' not in error:
+                error.append('ошибка в написании')
 
         if error:
             if on:
-                highlighted_text.append((corrected[word] + ' ', ', '.join(error), "#afa"))
+                highlighted_text.append((corrected[word] + ' ', ', '.join(error).capitalize(), "#afa"))
                 highlighted_text.append('  ')
             else:
                 highlighted_text.append(f'<span>{corrected[word]}</span>')
@@ -32,20 +52,7 @@ def highlight_differences(original, corrected):
                 highlighted_text.append(' ' + corrected[word] + ' ')
             else:
                 highlighted_text.append(corrected[word])
-        # if word.startswith('+'):
-        #     # highlighted_text.append(f'<span style="color:green;">{word[2:]}</span>')
-        #     if on:
-        #         highlighted_text.append((word[2:] + ' ', 'Заглавная буква', "#afa"))
-        #         highlighted_text.append('  ')
-        #     else:
-        #         highlighted_text.append(f'<span>{word[2:]}</span>')
-        # elif word.startswith('?'):
-        #     pass
-        # else:
-        #     if on:
-        #         highlighted_text.append(' ' + word[2:] + ' ')
-        #     else:
-        #         highlighted_text.append(word[2:])
+
     if on:
         return highlighted_text
     return ' '.join(highlighted_text)
@@ -66,8 +73,11 @@ col1, col2 = st.columns([4, 1])  # Ширина первой колонки бо
 with col1:
     if st.button("Исправить текст"):
         if user_input:
-            # Correct the text
-            corrected_text = user_input.title()
+            tokenizer, model = get_sage()
+            sentence = user_input
+            inputs = tokenizer(sentence, max_length=None, padding="longest", truncation=False, return_tensors="pt")
+            outputs = model.generate(**inputs.to(model.device), max_length = inputs["input_ids"].size(1) * 1.5)
+            corrected_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
 
             # Highlight corrections
             highlighted_text = highlight_differences(user_input, corrected_text)
