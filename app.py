@@ -8,7 +8,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 def get_sage():
     tokenizer = AutoTokenizer.from_pretrained("ai-forever/sage-fredt5-distilled-95m")
     #model = AutoModelForSeq2SeqLM.from_pretrained("ai-forever/sage-fredt5-distilled-95m")
-    model = OVModelForSeq2SeqLM.from_pretrained('app/sage-t5-small-ov-f32', local_files_only=True, compile=True)
+    model = OVModelForSeq2SeqLM.from_pretrained('/', local_files_only=True, compile=True)
     #model.to("cuda")
     return tokenizer, model
 
