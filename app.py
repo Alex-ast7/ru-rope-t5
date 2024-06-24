@@ -28,16 +28,19 @@ def highlight_differences(original, corrected):
         for type in dif:
             ind1 = type[1]
             ind2 = type[2]
-            if type[0] == 'replace' and corrected[word][ind1].islower() != original[ind2].islower() and 'регистр буквы' not in error:
-                error.append('регистр буквы')
-            elif type[0] == 'replace' and 'ошибка в написании' not in error:
-                error.append('ошибка в написании')
-            if type[0] == 'insert' and corrected[word][ind1] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
+            if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
                 error.append('пропущен знак препинания')
-            elif type[0] == 'insert' and 'пропущена буква' not in error:
-                error.append('пропущена буква')
-            if type[0] == 'delete' and 'лишняя буква' not in error:
-                error.append('лишняя буква')
+            else:
+                if type[0] == 'replace' and corrected[word][ind2].islower() != original[ind1].islower() and 'регистр буквы' not in error:
+                    error.append('регистр буквы')
+                elif type[0] == 'replace' and 'ошибка в написании' not in error:
+                    error.append('ошибка в написании')
+                if type[0] == 'insert' and corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
+                    error.append('пропущен знак препинания')
+                elif type[0] == 'insert' and 'пропущена буква' not in error:
+                    error.append('пропущена буква')
+                if type[0] == 'delete' and 'лишняя буква' not in error:
+                    error.append('лишняя буква')
 
 
 
