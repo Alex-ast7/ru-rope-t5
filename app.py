@@ -30,6 +30,8 @@ def highlight_differences(original, corrected):
             ind2 = type[2]
             if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
                 error.append('пропущен знак препинания')
+                if len(original[word]) == len(corrected[word][:-1]) and 'ошибка в написании' not in error:
+                    error.append('ошибка в написании')
             elif len(original[word]) == len(corrected[word]) and 'ошибка в написании' not in error:
                 error.append('ошибка в написании')
             else:
