@@ -13,6 +13,11 @@ def get_sage():
     return tokenizer, model
 
 def get_levenshtein_mask(source, correct):
+    words = [0]
+    start = 0
+    for word in correct.split():
+        words.append(start + len(word))
+    print(words)
     mask = [[0] for _ in range(len(correct))]
     changes = editops(correct, source)
     changes_letters = []
@@ -41,19 +46,24 @@ def get_levenshtein_mask(source, correct):
 # Function to highlight differences
 def highlight_differences(original, corrected):
 
+    words = [0]
+    start = 0
+    for word in corrected.split():
+        words.append(start + len(word))
+    print()
     # diff = ndiff(original.split(), corrected.split())
     highlighted_text = []
     # print(list(diff))
     original = original.split()
     corrected = corrected.split()
 
-    for word in range(len(corrected)):
-        error = []
-        dif = editops(original[word], corrected[word])
-        for type in dif:
-            ind1 = type[1]
-            ind2 = type[2]
-            print(corrected, word, ind2)
+    # for word in range(len(corrected)):
+    #     error = []
+    #     dif = editops(original[word], corrected[word])
+    #     for type in dif:
+    #         ind1 = type[1]
+    #         ind2 = type[2]
+    #         print(corrected, word, ind2)
             # if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
             #     error.append('пропущен знак препинания')
             # elif (len(original[word]) == len(corrected[word]) or len(original[word]) == len(
@@ -70,7 +80,7 @@ def highlight_differences(original, corrected):
             #         error.append('пропущена буква')
             #     if type[0] == 'delete' and 'лишняя буква' not in error:
             #         error.append('лишняя буква')
-            error.append('test')
+            # error.append('test')
 
 
 
