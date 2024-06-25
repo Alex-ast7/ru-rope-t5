@@ -57,31 +57,41 @@ def highlight_differences(original, corrected):
     # print(list(diff))
     original = original.split()
     corrected = corrected.split()
+    # final_corrected = []
+    # final_original = []
+    # for i in range(len(corrected) - 1):
+    #     final_original.append(original[i])
+    #
+    #     if corrected[i] + corrected[i + 1] in original[i]:
+    #         finsl_original.append()
 
 
-    for word in range(len(corrected)):
+    for word in range(len(corrected) - 1):
         error = []
         dif = editops(original[word], corrected[word])
         for type in dif:
             ind1 = type[1]
             ind2 = type[2]
             print(corrected, word, ind2)
-            if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
-                error.append('пропущен знак препинания')
-            elif (len(original[word]) == len(corrected[word]) or len(original[word]) == len(
-                    corrected[word][:-1])) and 'ошибка в написании' not in error:
-                error.append('ошибка в написании')
+            if corrected[word] + corrected[word + 1] == original[word]:
+                error.append('раздельное написание')
             else:
-                if type[0] == 'replace' and corrected[word][ind2].islower() != original[word][ind1].islower() and original[word][ind1] not in ",.:;'[]|\()!@#$%^&*-=+?" and 'регистр буквы' not in error:
-                    error.append('регистр буквы')
-                elif type[0] == 'replace' and 'ошибка в написании' not in error:
-                    error.append('ошибка в написании')
-                if type[0] == 'insert' and corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
+                if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
                     error.append('пропущен знак препинания')
-                elif type[0] == 'insert' and 'пропущена буква' not in error:
-                    error.append('пропущена буква')
-                if type[0] == 'delete' and 'лишняя буква' not in error:
-                    error.append('лишняя буква')
+                elif (len(original[word]) == len(corrected[word]) or len(original[word]) == len(
+                        corrected[word][:-1])) and 'ошибка в написании' not in error:
+                    error.append('ошибка в написании')
+                else:
+                    if type[0] == 'replace' and corrected[word][ind2].islower() != original[word][ind1].islower() and original[word][ind1] not in ",.:;'[]|\()!@#$%^&*-=+?" and 'регистр буквы' not in error:
+                        error.append('регистр буквы')
+                    elif type[0] == 'replace' and 'ошибка в написании' not in error:
+                        error.append('ошибка в написании')
+                    if type[0] == 'insert' and corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
+                        error.append('пропущен знак препинания')
+                    elif type[0] == 'insert' and 'пропущена буква' not in error:
+                        error.append('пропущена буква')
+                    if type[0] == 'delete' and 'лишняя буква' not in error:
+                        error.append('лишняя буква')
 
 
         # if len(corrected[word]) > len(original[word]):
