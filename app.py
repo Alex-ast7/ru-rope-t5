@@ -42,48 +42,46 @@ def get_levenshtein_mask(source, correct):
             i += 1
     if i == len(changes_letters) - 1:
         swap_changes.append(changes_letters[i])
-    print(swap_changes)
+    return swap_changes
 
 # Function to highlight differences
 def highlight_differences(original, corrected):
-
-    words = []
-    start = 0
-    for word in corrected.split():
-        words.append(start)
-
-    print()
-    # diff = ndiff(original.split(), corrected.split())
+    # words = []
+    # start = 0
+    # for word in corrected.split():
+    #     words.append(start)
+    #     start += len(word) + 1
+    # print(words)
+    diff = editops(original.split(), corrected.split())
     highlighted_text = []
     # print(list(diff))
     original = original.split()
     corrected = corrected.split()
 
-    # for word in range(len(corrected)):
-    #     error = []
-    #     dif = editops(original[word], corrected[word])
-    #     for type in dif:
-    #         ind1 = type[1]
-    #         ind2 = type[2]
-    #         print(corrected, word, ind2)
-            # if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
-            #     error.append('пропущен знак препинания')
-            # elif (len(original[word]) == len(corrected[word]) or len(original[word]) == len(
-            #         corrected[word][:-1])) and 'ошибка в написании' not in error:
-            #     error.append('ошибка в написании')
-            # else:
-            #     if type[0] == 'replace' and corrected[word][ind2].islower() != original[word][ind1].islower() and original[word][ind1] not in ",.:;'[]|\()!@#$%^&*-=+?" and 'регистр буквы' not in error:
-            #         error.append('регистр буквы')
-            #     elif type[0] == 'replace' and 'ошибка в написании' not in error:
-            #         error.append('ошибка в написании')
-            #     if type[0] == 'insert' and corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
-            #         error.append('пропущен знак препинания')
-            #     elif type[0] == 'insert' and 'пропущена буква' not in error:
-            #         error.append('пропущена буква')
-            #     if type[0] == 'delete' and 'лишняя буква' not in error:
-            #         error.append('лишняя буква')
-            # error.append('test')
 
+    for word in range(len(corrected)):
+        error = []
+        dif = editops(original[word], corrected[word])
+        for type in dif:
+            ind1 = type[1]
+            ind2 = type[2]
+            print(corrected, word, ind2)
+            if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
+                error.append('пропущен знак препинания')
+            elif (len(original[word]) == len(corrected[word]) or len(original[word]) == len(
+                    corrected[word][:-1])) and 'ошибка в написании' not in error:
+                error.append('ошибка в написании')
+            else:
+                if type[0] == 'replace' and corrected[word][ind2].islower() != original[word][ind1].islower() and original[word][ind1] not in ",.:;'[]|\()!@#$%^&*-=+?" and 'регистр буквы' not in error:
+                    error.append('регистр буквы')
+                elif type[0] == 'replace' and 'ошибка в написании' not in error:
+                    error.append('ошибка в написании')
+                if type[0] == 'insert' and corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
+                    error.append('пропущен знак препинания')
+                elif type[0] == 'insert' and 'пропущена буква' not in error:
+                    error.append('пропущена буква')
+                if type[0] == 'delete' and 'лишняя буква' not in error:
+                    error.append('лишняя буква')
 
 
         # if len(corrected[word]) > len(original[word]):
@@ -104,21 +102,21 @@ def highlight_differences(original, corrected):
         #     if corrected[word][i].lower() != original[word][i].lower() and 'ошибка в написании' not in error:
         #         error.append('ошибка в написании')
 
-    #     if error:
-    #         if on:
-    #             highlighted_text.append((corrected[word] + ' ', ', '.join(error).capitalize(), "#afa"))
-    #             highlighted_text.append('  ')
-    #         else:
-    #             highlighted_text.append(f'<span>{corrected[word]}</span>')
-    #     else:
-    #         if on:
-    #             highlighted_text.append(' ' + corrected[word] + ' ')
-    #         else:
-    #             highlighted_text.append(corrected[word])
-    #
-    # if on:
-    #     return highlighted_text
-    # return ' '.join(highlighted_text)
+        if error:
+            if on:
+                highlighted_text.append((corrected[word] + ' ', ', '.join(error).capitalize(), "#afa"))
+                highlighted_text.append('  ')
+            else:
+                highlighted_text.append(f'<span>{corrected[word]}</span>')
+        else:
+            if on:
+                highlighted_text.append(' ' + corrected[word] + ' ')
+            else:
+                highlighted_text.append(corrected[word])
+
+    if on:
+        return highlighted_text
+    return ' '.join(highlighted_text)
 
 st.title("Корректор текста")
 
@@ -143,9 +141,7 @@ with col1:
             corrected_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
 
             # Highlight corrections
-            highlighted_text = get_levenshtein_mask(user_input, corrected_text)
-
-            # highlighted_text = highlight_differences(user_input, corrected_text)
+            highlighted_text = highlight_differences(user_input, corrected_text)
             st.markdown("### Исправленный текст:")
             if on:
                 annotated_text(highlighted_text)
