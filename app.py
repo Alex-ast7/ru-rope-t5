@@ -102,21 +102,21 @@ def highlight_differences(original, corrected):
         #     if corrected[word][i].lower() != original[word][i].lower() and 'ошибка в написании' not in error:
         #         error.append('ошибка в написании')
 
-        if error:
-            if on:
-                highlighted_text.append((corrected[word] + ' ', ', '.join(error).capitalize(), "#afa"))
-                highlighted_text.append('  ')
-            else:
-                highlighted_text.append(f'<span>{corrected[word]}</span>')
-        else:
-            if on:
-                highlighted_text.append(' ' + corrected[word] + ' ')
-            else:
-                highlighted_text.append(corrected[word])
-
-    if on:
-        return highlighted_text
-    return ' '.join(highlighted_text)
+    #     if error:
+    #         if on:
+    #             highlighted_text.append((corrected[word] + ' ', ', '.join(error).capitalize(), "#afa"))
+    #             highlighted_text.append('  ')
+    #         else:
+    #             highlighted_text.append(f'<span>{corrected[word]}</span>')
+    #     else:
+    #         if on:
+    #             highlighted_text.append(' ' + corrected[word] + ' ')
+    #         else:
+    #             highlighted_text.append(corrected[word])
+    #
+    # if on:
+    #     return highlighted_text
+    # return ' '.join(highlighted_text)
 
 st.title("Корректор текста")
 
