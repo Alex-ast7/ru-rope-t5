@@ -17,7 +17,7 @@ def get_levenshtein_mask(source, correct):
     start = 0
     for word in correct.split():
         words.append(start)
-        start += len(word)
+        start += len(word) + 1
     print(words)
     mask = [[0] for _ in range(len(correct))]
     changes = editops(correct, source)
