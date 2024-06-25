@@ -12,6 +12,31 @@ def get_sage():
     #model.to("cuda")
     return tokenizer, model
 
+def get_levenshtein_mask(source, correct):
+    mask = [[0] for _ in range(len(correct))]
+    changes = editops(correct, source)
+    changes_letters = []
+    for change in changes:
+        if change[0] == 'delete' or change[0] == 'replace':
+            changes_letters.append((change[0], change[1], change[2], correct[change[1]]))
+        else:
+            changes_letters.append((change[0], change[1], change[2], source[change[2]]))
+    swap_changes = []
+    i = 0
+    while i < len(changes_letters) - 1:
+        change_1 = changes_letters[i]
+        change_2 = changes_letters[i + 1]
+        if change_1[0] == 'insert' and change_2[0] == 'delete' and change_1[3] == change_2[3] and change_2[1] - \
+                change_1[1] == 1:
+            swap_changes.append(('swap', change_1[1], change_1[2], change_1[3]))
+            swap_changes.append(('swap', change_2[1], change_1[2] + 1, change_2[3]))
+            i += 2
+        else:
+            swap_changes.append(change_1)
+            i += 1
+    if i == len(changes_letters) - 1:
+        swap_changes.append(changes_letters[i])
+    print(swap_changes)
 
 # Function to highlight differences
 def highlight_differences(original, corrected):
@@ -106,7 +131,9 @@ with col1:
             corrected_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
 
             # Highlight corrections
-            highlighted_text = highlight_differences(user_input, corrected_text)
+            highlighted_text = get_levenshtein_mask(user_input, corrected_text)
+
+            # highlighted_text = highlight_differences(user_input, corrected_text)
             st.markdown("### Исправленный текст:")
             if on:
                 annotated_text(highlighted_text)
