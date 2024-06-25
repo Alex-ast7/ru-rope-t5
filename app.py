@@ -69,13 +69,10 @@ def highlight_differences(original, corrected):
     for word in range(len(corrected) - 1):
         error = []
         dif = editops(original[word], corrected[word])
-        for type in dif:
-            ind1 = type[1]
-            ind2 = type[2]
-            print(corrected, word, ind2)
-            if corrected[word] + corrected[word + 1] == original[word]:
-                error.append('раздельное написание')
-            else:
+        try:
+            for type in dif:
+                ind1 = type[1]
+                ind2 = type[2]
                 if corrected[word][ind2] in ",.:;'[]|\()!@#$%^&*-=+?" and 'пропущен знак препинания' not in error:
                     error.append('пропущен знак препинания')
                 elif (len(original[word]) == len(corrected[word]) or len(original[word]) == len(
@@ -92,6 +89,9 @@ def highlight_differences(original, corrected):
                         error.append('пропущена буква')
                     if type[0] == 'delete' and 'лишняя буква' not in error:
                         error.append('лишняя буква')
+        except:
+            on = False
+
 
 
         # if len(corrected[word]) > len(original[word]):
