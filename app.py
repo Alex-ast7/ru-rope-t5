@@ -13,10 +13,11 @@ def get_sage():
     return tokenizer, model
 
 def get_levenshtein_mask(source, correct):
-    words = [0]
+    words = []
     start = 0
     for word in correct.split():
-        words.append(start + len(word))
+        words.append(start)
+        start += len(word)
     print(words)
     mask = [[0] for _ in range(len(correct))]
     changes = editops(correct, source)
@@ -46,10 +47,11 @@ def get_levenshtein_mask(source, correct):
 # Function to highlight differences
 def highlight_differences(original, corrected):
 
-    words = [0]
+    words = []
     start = 0
     for word in corrected.split():
-        words.append(start + len(word))
+        words.append(start)
+
     print()
     # diff = ndiff(original.split(), corrected.split())
     highlighted_text = []
