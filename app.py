@@ -7,7 +7,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 @st.cache_resource
 def get_sage():
     tokenizer = AutoTokenizer.from_pretrained("ru-rope-t5/", local_files_only=True, compile=True)
-    model = OVModelForSeq2SeqLM.from_pretrained('sage/', local_files_only=True, compile=True)
+    model = OVModelForSeq2SeqLM.from_pretrained('app/', local_files_only=True, compile=True)
     return tokenizer, model
 
 
