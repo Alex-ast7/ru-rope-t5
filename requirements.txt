@@ -1,5 +1,5 @@
 streamlit
 st-annotated-text
 transformers
-optimum[openvino]
+optimum[openvino]==1.17.2
 Levenshtein
