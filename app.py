@@ -7,9 +7,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 @st.cache_resource
 def get_sage():
     tokenizer = AutoTokenizer.from_pretrained("ai-forever/sage-fredt5-distilled-95m")
-    #model = AutoModelForSeq2SeqLM.from_pretrained("ai-forever/sage-fredt5-distilled-95m")
-    model = OVModelForSeq2SeqLM.from_pretrained('app/', local_files_only=True, compile=True)
-    #model.to("cuda")
+    model = OVModelForSeq2SeqLM.from_pretrained('sage/', local_files_only=True, compile=True)
     return tokenizer, model
 
 
@@ -88,29 +86,6 @@ def highlight_differences(original, corrected):
         return highlighted_text
     return ' '.join(highlighted_text)
 
-
-# Function to highlight differences
-# def highlight_differences(original, corrected):
-#     diff = editops(original.split(), corrected.split())
-#     highlighted_text = []
-#     # print(list(diff))
-#     original = original.split()
-#     corrected = corrected.split()
-#     if error:
-#         if on:
-#             highlighted_text.append((corrected[word] + ' ', ', '.join(error).capitalize(), "#afa"))
-#             highlighted_text.append('  ')
-#         else:
-#             highlighted_text.append(f'<span>{corrected[word]}</span>')
-#     else:
-#         if on:
-#             highlighted_text.append(' ' + corrected[word] + ' ')
-#         else:
-#             highlighted_text.append(corrected[word])
-#
-#     if on:
-#         return highlighted_text
-#     return ' '.join(highlighted_text)
 
 st.title("Корректор текста")
 
